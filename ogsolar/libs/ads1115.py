@@ -1,8 +1,12 @@
+import os
+import tempfile
+from   time import sleep
+
 from   p3lib.helper import getDict, saveDict
 from   p3lib.uio import UIO
+
 from   ogsolar.libs.hw_support import I2CInterface
-import os
-from   time import sleep
+
 
 class ADS1115Error(Exception):
   pass
@@ -333,9 +337,8 @@ class ADS1115ADCSimulator(I2CInterface):
 
     def _getTempDir(self):
         """@brief Get a temp dir to use.
-                  !!! Can't use the tempfile module as this does not work on the
-                  Omega2 platform."""
-        return '/tmp'
+           @return The temp folder."""
+        return tempfile.gettempdir()
 
     def _init(self):
         """@Init Set initial attribute states."""

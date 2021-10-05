@@ -6,7 +6,7 @@ from   ogsolar.libs.epsolar_tracer import EPSolarTracerInterface
 from   ogsolar.libs.ogsolar_controller import OGSolarController
 
 class HttpJsonTranslator(object):
-    """@brief Responsible for providing a JSON file to be read by the Omega2 web server."""
+    """@brief Responsible for providing a JSON file to be read by the web server."""
 
     TRACER_KWH_GEN_DAY           = "GENERATED KWH TODAY"
     TRACER_KWH_GEN_MONTH         = "GENERATED KWH THIS MONTH"
@@ -73,7 +73,14 @@ class HttpJsonTranslator(object):
                     table1Dict[9]=[EPSolarTracerInterface.BATTERY_TEMPERATURE, "%.3f" % (sysStatusDict[EPSolarTracerInterface.BATTERY_TEMPERATURE]) ]
                 
                 if EPSolarTracerInterface.CONTROLLER_TEMPERATURE in sysStatusDict:
-                    table1Dict[10]=[EPSolarTracerInterface.CONTROLLER_TEMPERATURE, "%.3f" % (sysStatusDict[EPSolarTracerInterface.CONTROLLER_TEMPERATURE]) ]
+                    #Changed the name of the key here until the web server database schema has been updated.
+                    table1Dict[10]=["MPPT CONTROLLER TEMPERATURE", "%.3f" % (sysStatusDict[EPSolarTracerInterface.CONTROLLER_TEMPERATURE]) ]
+                
+                if OGSolarController.RPI_HEATSINK_TEMPERATURE in sysStatusDict:
+                    table1Dict[11]=[OGSolarController.RPI_HEATSINK_TEMPERATURE, "%.3f" % (sysStatusDict[OGSolarController.RPI_HEATSINK_TEMPERATURE]) ]
+                
+                if OGSolarController.RPI_CPU_TEMPERATURE in sysStatusDict:
+                    table1Dict[12]=[OGSolarController.RPI_CPU_TEMPERATURE, "%.3f" % (sysStatusDict[OGSolarController.RPI_CPU_TEMPERATURE]) ]
                 
                 table1StatusDictStr = json.dumps( table1Dict, sort_keys=True, indent=4, separators=(',', ': '))
                 

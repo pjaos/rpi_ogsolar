@@ -20,6 +20,8 @@ class OGSolarController(object):
     INVERTER_ON_OFF_DELAY               = 2
     MAX_HEATSINK_TEMP_C                 = 65
     MAX_CPU_TEMP_C                      = 60
+    RPI_HEATSINK_TEMPERATURE            = "RPi CONTROLLER HEATSINK TEMPERATURE"
+    RPI_CPU_TEMPERATURE                 = "RPi CONTROLLER CPU TEMPERATURE"
 
     @staticmethod
     def GetMemUsage():
@@ -117,10 +119,10 @@ class OGSolarController(object):
                 pollSecs = self._appConfig.getAttr(AppConfig.TRACER_MPPT_POLL_SECONDS)
                 
                 self._showMemUsage(1)
-                        
-                self._checkMaxTemp()
-                
+                                        
                 sysStatusDict = self._getTracerRegDict()
+                self._checkMaxTemp(sysStatusDict)
+
                 if not sysStatusDict:
                     errMsg        = "!!! No data read from Tracer MPPT Controller !!!"
                     self._uio.error("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
@@ -215,13 +217,18 @@ class OGSolarController(object):
         self._uio.info('Load AMPS: {:.3f}, Load WATTS {:.3f}'.format(sysStatusDict[EPSolarTracerInterface.BAT_AMPS], 
                                                                      sysStatusDict[EPSolarTracerInterface.BAT_LOAD_WATTS])) 
                 
-    def _checkMaxTemp(self):
-        """@brief Check that the temperatures of the hatsink and the CPU are below the max values."""
+    def _checkMaxTemp(self, sysStatusDict):
+        """@brief Check that the temperatures of the hatsink and the CPU are below the max values.
+           @param sysStatusDict The dict of values obtained from the MPPT controller."""
         heatSinkTempC = self._adcInterface.getHSTemp()
         cpuTempC = self._adcInterface.getCPUTemp()
         
         self._uio.info('Heat sink: {:.1f} °C'.format(heatSinkTempC)) 
-        self._uio.info('CPU:       {:.1f} °C'.format(cpuTempC)) 
+        self._uio.info('CPU:       {:.1f} °C'.format(cpuTempC))
+        
+        if sysStatusDict:
+            sysStatusDict[OGSolarController.RPI_HEATSINK_TEMPERATURE] = heatSinkTempC
+            sysStatusDict[OGSolarController.RPI_CPU_TEMPERATURE] = cpuTempC
         
         if heatSinkTempC > OGSolarController.MAX_HEATSINK_TEMP_C:
             raise Exception("Heat sink temp > max {:.1f}".format(OGSolarController.MAX_HEATSINK_TEMP_C))

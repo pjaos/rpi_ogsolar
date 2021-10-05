@@ -39,11 +39,7 @@ class I2CInterface(object):
     """@brief This is a wrapper class for the python I2C interface that is
               platform specific.
               This allows the same code to be used across platforms as long as
-              this class supports the platform. Currently the following platforms
-              are supported.
-
-              - Omega2
-
+              this class supports the platform. 
        @param simulateHardware If True then the hardware will be simulated and
                                therefore do not raise hardware unsupported errors."""
 
