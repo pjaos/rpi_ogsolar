@@ -6,7 +6,7 @@ AUTHOR         = "Paul Austen"                                                  
 AUTHOR_EMAIL   = "pausten.os@gmail.com"                                         # The email address of the author
 DESCRIPTION    = "A Raspberry PI application for controlling EPEver Tracer off grid solar installations."   # A short description of the application
 LICENSE        = "MIT License"                                                  # The License that the application is distributed under
-REQUIRED_LIBS  = ['p3lib>=1.1.23']                                              # A python list of required libs (optionally including versions)
+REQUIRED_LIBS  = ['p3lib>=1.1.23','tornado>=6.1']                               # A python list of required libs (optionally including versions)
 STARTUP_SCRIPTS= ['scripts/ogsolar','scripts/tracer']                           # The command line startup scripts to be installed.
 
 with open("README.md", "r") as fh:

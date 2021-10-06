@@ -20,8 +20,8 @@ class OGSolarController(object):
     INVERTER_ON_OFF_DELAY               = 2
     MAX_HEATSINK_TEMP_C                 = 65
     MAX_CPU_TEMP_C                      = 60
-    RPI_HEATSINK_TEMPERATURE            = "RPi CONTROLLER HEATSINK TEMPERATURE"
-    RPI_CPU_TEMPERATURE                 = "RPi CONTROLLER CPU TEMPERATURE"
+    RPI_HEATSINK_TEMPERATURE            = "RPi CONTROLLER HEATSINK °C"
+    RPI_CPU_TEMPERATURE                 = "RPi CONTROLLER CPU °C"
 
     @staticmethod
     def GetMemUsage():

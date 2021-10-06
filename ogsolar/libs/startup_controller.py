@@ -14,6 +14,8 @@ from ogsolar.libs.yview_client import YViewClient
 from ogsolar.libs.httpjsontranslator import HttpJsonTranslator
 from ogsolar.libs.json_pusher import JsonPusher
 from ogsolar.libs.app_config import AppConfig
+from ogsolar.libs.web_server import WebServer
+from ogsolar.libs.yview_client import AYTListener
  
 class StartupController(object):
     """@brief Responsible for starting all the threads that compose the ogsolar system."""
@@ -72,6 +74,12 @@ class StartupController(object):
         jsonPusherThread = Thread(target=StartupController.RunThread, args=(self._uio, self._jsonPusher.run,) )
         jsonPusherThread.setDaemon(True)
         jsonPusherThread.start()
+
+        webServerThread = WebServer()
+        webServerThread.setPort(AYTListener.WEB_SERVER_PORT)
+        webServerThread.setUIO(self._uio)
+        webServerThread.setDaemon(True)
+        webServerThread.start()
         
         self._oGSolarController = OGSolarController(self._uio, self._options, self._appConfig, self._traceConduit, self._yViewConduit, self._webConduit, self._jsonPusherConduit)
         #This thread has to shutdown in a controlled fashion and so is not a daemon thread.

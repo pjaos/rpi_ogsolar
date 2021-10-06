@@ -13,6 +13,7 @@ class AYTListener(object):
     UDP_DEV_DISCOVERY_PORT   = 2934
     UDP_RX_BUFFER_SIZE       = 2048
     AreYouThereMessage       = "{\"AYT\": \"-!#8[dkG^v's!dRznE}6}8sP9}QoIR#?O&pg)Qra\"}"
+    WEB_SERVER_PORT          = 8080
     
     def __init__(self, uo, options, idDict):
         """@Constructor
@@ -63,7 +64,7 @@ class AYTListener(object):
                         self._yviewDict["IP_ADDRESS"] = self._ipAddress
                         self._yviewDict["UNIT_NAME"] = self._yviewDict["IP_ADDRESS"]
                         self._yviewDict["PRODUCT_ID"] = "OGSOLAR"
-                        self._yviewDict["SERVICE_LIST"] = "SSH:22,WEB:80"
+                        self._yviewDict["SERVICE_LIST"] = "SSH:22,WEB:{}".format(AYTListener.WEB_SERVER_PORT)
                         yviewDictStr = json.dumps(self._yviewDict, sort_keys=True, indent=4, separators=(',', ': '))
 
                         if self._options.debug:
