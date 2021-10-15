@@ -1,0 +1,25 @@
+#div1 {
+  border-radius:10;
+}
+
+.panel.panel-default {
+  border-radius:initial;
+}
+
+.article-clean {
+  border-radius:initial;
+  text-align:right;
+}
+
+#c1 {
+  /*border-radius:60px;*/
+  padding-top:30px;
+  padding-left:30px;
+  padding-right:30px;
+  padding-bottom:30px;
+}
+
+#jt1 {
+  border-radius:40px;
+}
+
