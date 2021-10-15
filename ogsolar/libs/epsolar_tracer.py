@@ -262,8 +262,9 @@ class EPSolarTracerInterface(object):
         self._translatedDict[EPSolarTracerInterface.TRACER_KW_GEN_MONTH] = self._tracerClient.getRegisterByName(GENERATED_ENERGY_THIS_MONTH_H).getValue()    # The MPTT KWH generated this month
         self._translatedDict[EPSolarTracerInterface.TRACER_KW_GEN_YEAR] = self._tracerClient.getRegisterByName(GENERATED_ENERGY_THIS_YEAR_H).getValue()      # The MPTT KWH generated this year
 
-        # It is dangerous to charge Lion batteries bellow 0C as this risks dendrite creation which can grow through the electrolyte and short out the battery.
-        # Therefore ensure we set the min temperature that the charger will charge the battery
+        # It is dangerous to charge Lion batteries below 0C as this risks dendrite creation. 
+        # These can grow through the electrolyte and short out the battery.
+        # Therefore ensure we set the min temperature that the charger will charge the battery.
         minBatChargeTemp = self._tracerClient.getRegisterByName(BATTERY_TEMPERATURE_WARNING_LOWER_LIMIT).getValue()
         self._uio.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> Min battery charge temp (°C): {:.1f}".format(minBatChargeTemp))
         if minBatChargeTemp < EPSolarTracerInterface.MIN_BATTERY_CHARGE_TEMP:
