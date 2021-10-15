@@ -1,0 +1,4 @@
+# All files must be in or under the python module folder
+recursive-include ogsolar/www/html *
+
+
