@@ -57,7 +57,7 @@ class RPI_I2CDriver(object):
 
     def __init__(self, i2CBusID=1):
         """@brief Constructor
-           @param i2CBusID The I2c device number (E.G 1 = /dev/i2c-1 device exists."""
+           @param i2CBusID The I2c device number (E.G 1 = /dev/i2c-1 device exists)."""
         import smbus
         self._i2cBus = smbus.SMBus(i2CBusID)
 
@@ -65,7 +65,8 @@ class RPI_I2CDriver(object):
         """@brief Read data bytes or word on i2C bus,
            @param devAddr The address of the device to access.
            @param regAddr The register address in the device.
-           @param size The number of bytes to read consecutivley."""
+           @param size The number of bytes to read consecutively.
+           @return A list of bytes read."""
         return self._i2cBus.read_i2c_block_data(devAddr, regAddr, size)
 
     def writeBytes(self, devAddr, regAddr, valueList):

@@ -78,6 +78,7 @@ class StartupController(object):
         webServerThread = WebServer()
         webServerThread.setPort(AYTListener.WEB_SERVER_PORT)
         webServerThread.setUIO(self._uio)
+        webServerThread.setWebRoot(self._options.web_root)
         webServerThread.setDaemon(True)
         webServerThread.start()
         

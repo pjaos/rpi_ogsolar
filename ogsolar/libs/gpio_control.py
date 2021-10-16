@@ -10,6 +10,7 @@ except ImportError:
         OUT = 1
         LOW = 0
         HIGH = 1
+        IN = 0
         @staticmethod
         def setmode(mode):
             print("gpio:setmode({})".format(mode))

@@ -12,8 +12,7 @@ from ogsolar.libs.startup_controller import StartupController
 from ogsolar.libs.adc_interface import ADCInterface
 from ogsolar.libs.adc_cal import ADCCalibration
 from ogsolar.libs.gpio_control import GPIOControl
-
-DEGREES_C = "\xF8C"
+from ogsolar.libs.web_server import WebServer
 
 def readVoltage(uio, options):
     """@brief Read the voltage."""
@@ -36,7 +35,7 @@ def readCPUTemp(uio, options):
     adcInterface.debugCPUTempC()
 
 def stop():
-    """@brief Wait arounf forever."""
+    """@brief Wait around forever."""
     while True:
         sleep(10)
 
@@ -149,7 +148,7 @@ def main():
     opts.add_option("--cal",                help="Calibrate the voltage and current measurements.", action="store_true", default=False)
     opts.add_option("--quiet",              help="Do not display messages on stdout.", action="store_true", default=False)
     opts.add_option("--inv_on",             help="On startup set the inverter on and select the inverter output. By default the inverter is off and mains AC is selected.", action="store_true", default=False)
-    opts.add_option("--web_root",           help="The web root dir (default=/www).", default="/www")
+    opts.add_option("--web_root",           help="The web root dir (default={}).".format(WebServer.GetWebRootFolder()), default=WebServer.GetWebRootFolder())
     opts.add_option("--max_mem_inc",        help="The maximum memory (RAM) increase of ogsolar controller software before rebooting the system (default = %d kB)." % (StartupController.MAX_MEM_INCREASE_KB) , type="int", default=StartupController.MAX_MEM_INCREASE_KB)
     opts.add_option("--sim_json",           help="Developer use only. Simulate tracer MPPT Ctrl hardware. A JSON file is needed as the argument. This is a file saved using menu option 2 when running the tracer command. This saves a JSON file with the state of all the tracer unit registers.", default=None)
     opts.add_option("--tracer_log",         help="Log file for EPSolar Tracer register values (default = none). If --sim_tracer is used then tracer register values are read from this file. If --sim_tracer is not used then register values read from the Tracer hardware are written (appended) to this file.", default=None)
@@ -176,7 +175,10 @@ def main():
 
     try:
         (options, args) = opts.parse_args()
-        
+
+        #Before starting any threads ensure we have a web root folder.
+        WebServer.EnsureWebRootExists()
+                    
         if options.debug:
             uio.enableDebug(options.debug)
         
@@ -188,7 +190,6 @@ def main():
             return
 
         if options.dc:
-            print("PJA: 1")
             readCurrent(uio, options)
             return
 
