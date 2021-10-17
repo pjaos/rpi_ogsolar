@@ -614,6 +614,15 @@ sudo ogsolar --disable_auto_start
 | :exclamation:  Note that the The Rpi will reboot periodically if un configured or the EPSolar Tracer MPPT Charger is not connected via a USB RS485 adaptor.   |
 |-----------------------------------------|
 
+## Disable syslog.
+If syslog is left runniong on the Raspberry PI then it will shortent the life of the SD card due to the data written to it during normal operation. 
+OGSsolar also updates syslog data. Therefore it is useful to disable the syslog server on the Raspberry PI. This can be done using the following commands.
+
+```
+sudo systemctl stop syslog
+sudo systemctl disable syslog
+```
+
 # [Save RPi SD card](#save-rpi-sd-card)
 
 The RPi is now running the OGSolar system.
