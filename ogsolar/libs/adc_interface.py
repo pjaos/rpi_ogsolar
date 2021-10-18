@@ -72,6 +72,13 @@ class ADCInterface(object):
         amps=0.0
         if codesPerAmp > 0:
             amps = float(codes)/codesPerAmp
+        
+        self._uio.debug("AMPS = {:.03f}".format(amps) )
+        
+        #Add a 10ma low current limit as previously low -ve amps values could be reported.
+        if amps < 0.01:
+            amps = 0
+            self._uio.debug("Set AMPS to 0.0 as below 0.01 threshold." )
 
         return amps
         
