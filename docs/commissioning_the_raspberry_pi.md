@@ -619,8 +619,8 @@ If syslog is left runniong on the Raspberry PI then it will shortent the life of
 OGSsolar also updates syslog data. Therefore it is useful to disable the syslog server on the Raspberry PI. This can be done using the following commands.
 
 ```
-sudo systemctl stop syslog
-sudo systemctl disable syslog
+sudo systemctl stop rsyslog
+sudo systemctl disable rsyslog
 ```
 
 # [Save RPi SD card](#save-rpi-sd-card)
