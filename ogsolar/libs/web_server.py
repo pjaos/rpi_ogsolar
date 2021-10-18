@@ -18,30 +18,15 @@ from tornado.web import RequestHandler, Application
 
 import tornado.web as web
 
-PUBLIC_ROOT = '/www'
-
-class MainHandler(RequestHandler):
-    def get(self):
-        self.render('index.html')
-
-handlers = [
-  (r'/', MainHandler),
-  (r'/(.*)', web.StaticFileHandler, {'path': PUBLIC_ROOT}),
-]
-
-settings = dict(
-  debug=True,
-  static_path=PUBLIC_ROOT,
-  template_path=PUBLIC_ROOT
-)
-
-application = web.Application(handlers, **settings)
-
 class WebServer(Thread):
     """@brief a web server to show the ogsolar status."""
     
     WEB_ROOT_SRC = "www/html" #The folder in the ogsolar module containing the web root files
     
+    class MainHandler(RequestHandler):
+        def get(self):
+            self.render('index.html')
+        
     @staticmethod
     def GetWebRootFolder():
         """@return The folder that holds the files served by the tornado web server."""
@@ -66,6 +51,12 @@ class WebServer(Thread):
             else:
                 raise Exception("{} folder not found.".format(webRootSrc))
     
+    def __init__(self, webRoot):
+        """@brief Constructor
+           @param webRoot The top level folder holding the files to be served by the web server."""
+        super().__init__()
+        self._webRoot = webRoot 
+        
     def setPort(self, port):
         """@brief Set the server port to use.
            @param port The TCP port to use."""
@@ -87,6 +78,15 @@ class WebServer(Thread):
         try:
             self._uio.info("Starting web server.")
             asyncio.set_event_loop(asyncio.new_event_loop())
+            handlers = [
+              (r'/', WebServer.MainHandler),
+              (r'/(.*)', web.StaticFileHandler, {'path': self._webRoot}),
+            ]
+            settings = dict(
+              debug=True,
+              static_path=self._webRoot,
+              template_path=self._webRoot
+            )
             application = Application(handlers, **settings)
             application.listen(self._port)
             IOLoop.instance().start()

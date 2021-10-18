@@ -75,10 +75,9 @@ class StartupController(object):
         jsonPusherThread.setDaemon(True)
         jsonPusherThread.start()
 
-        webServerThread = WebServer()
+        webServerThread = WebServer(self._options.web_root)
         webServerThread.setPort(AYTListener.WEB_SERVER_PORT)
         webServerThread.setUIO(self._uio)
-        webServerThread.setWebRoot(self._options.web_root)
         webServerThread.setDaemon(True)
         webServerThread.start()
         
