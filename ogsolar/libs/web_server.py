@@ -37,8 +37,9 @@ class WebServer(Thread):
     @staticmethod
     def EnsureWebRootExists():
         """@brief The root folder used by the web server must exist before the web server is started.
-                  The contents of this foler are copied from the www/html folder in the ogsolar 
-                  site-packages folder. The ogsolar/www is installed when the package is installed."""
+                  The contents of this folder is copied from the www/html folder in the ogsolar 
+                  site-packages folder. The destination for these server files is defined on 
+                  the cmd line but must be a writable folder by this application."""
         webRoot = WebServer.GetWebRootFolder()
         # If the web root does not exist, create it.
         if not os.path.isdir(webRoot):
