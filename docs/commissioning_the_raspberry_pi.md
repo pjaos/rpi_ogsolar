@@ -1,11 +1,81 @@
 # To Build ogsolar SD card for the Raspberry PI
 
 # Create SD card
+An Ubuntu 20.04 machine is required for this process.
 
-TODO This need to detail the way to get to this SD card image
+- Download the RASPBIAN STRETCH LITE image from https://www.raspberrypi.org/downloads/raspbian/, e.g 2018-03-13-raspbian-stretch-lite.zip
+
+- unzip the image using the following command
+
 ```
-sudo dd bs=4M status=progress conv=fsync if=with_tplink_usb_wifi_adaptor.bin of=/dev/sdd
+unzip 2018-03-13-raspbian-stretch-lite.zip
 ```
+
+This should create the 2018-03-13-raspbian-stretch-lite.img file.
+
+- Plug in an SD card to a USB3 SD card reader attached to the PC via a USB3 port.
+
+- Unmount all partitions on the the sd card using the Disks program.
+
+- Program the SD card using the following command.
+
+```
+sudo dd bs=4M status=progress conv=fsync if=2018-03-13-raspbian-stretch-lite.img of=/dev/sdd
+```
+
+- Remove the SD card.
+
+- Wait 10 seconds.
+
+- Plug sd card back into the SD card reader.
+
+- Check the location the boot partition is mounted. For the purposes of this guide the username will be refered to as auser. You will need to replace the 'auser' text with your username.
+
+  E.G /media/auser/boot
+
+- The following can be used to enable ssh, setup wifi, enable the serial console and enable the Raspberry Pi I2C interface.
+
+ ```
+ sudo touch /media/auser/boot/ssh
+ ```
+
+  - Edit the /media/auser/boot/wpa_supplicant.conf and update as shown below. The 'SSID' and 'PASSWORD' values should be replaced with those for your WiFi network. The /media/auser/boot/wpa_supplicant.conf file is copied to /etc/wpa_supplicant/wpa_supplicant.conf when the SD card boots a Raspberry PI for the first time.
+
+```   
+sudo vi /media/auser/boot/wpa_supplicant.conf
+
+
+country=GB
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+
+network={
+    ssid="SSID"
+    scan_ssid=1
+    psk="PASSWORD"
+    key_mgmt=WPA-PSK
+}
+```
+
+  - edit the /media/auser/boot/config.txt file and and add the following to the end of the file.
+  
+```  
+sudo vi /media/auser/boot/config.txt
+
+
+# Enable UART
+enable_uart=1
+
+dtparam=i2c_vc=on
+```
+
+- Unmount all partitions on the the sd card using the Disks program.
+
+- Insert the SD card into the Raspberry PI and power up the raspberry PI.
+
+The Raspberry PI should boot and the serial interface connector on the OGsolar PCB should present the serial console as it boots.
+
+
 
 # Update to the latest RPi (in my case buster) release
 
@@ -46,7 +116,7 @@ pi@raspberrypi:~ $ uname -a
 Linux raspberrypi 5.10.17-v7+ #1414 SMP Fri Apr 30 13:18:35 BST 2021 armv7l GNU/Linux
 ```
 
-This will be used later when installing drivers.
+Note the kernel version (5.10.17 in this case) as this will be used later when installing drivers.
 
 # [Save RPi SD card](#save-rpi-sd-card)
 
@@ -56,7 +126,8 @@ This will be used later when installing drivers.
 The driver for the WiFi adaptor that you have must now be installed.
 The following provides examples of how I installed the drivers for the
 WiFi USB devices that I had. Yours may have different chip sets therefore
-the commands may need to be altered accordingly.
+the commands may need to be altered accordingly. It is possible to 
+determine the chipset used by the USB WiFi adaptor using the lsusb command.
 
 ## Install driver for TP link USB Wifi adaptor
 
@@ -75,7 +146,7 @@ tar xvf 8822bu-5.10.60-v7-1449.tar.gz
 sudo ./install.sh
 ```
 
-## Install driver for other MediaTech USB Wifi adaptor with SMA port
+## Install driver for MediaTech USB Wifi adaptor with SMA port
 
 ```
 wget http://downloads.fars-robotics.net/wifi-drivers/8821cu-drivers/8821cu-5.10.60-v7-1449.tar.gz
