@@ -1,0 +1,1 @@
+These are Freecad 0.19 CAD files.

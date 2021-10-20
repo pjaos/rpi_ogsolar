@@ -1,0 +1,1 @@
+These are Kicad 5.1 project files.
