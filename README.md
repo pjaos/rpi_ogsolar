@@ -1,4 +1,4 @@
-# ogsolar
+# OGSolar
 An off grid Solar monitoring solution. This repo defines all the hardware 
 (PCB and case design) and software needed. A diagram of the system is 
 shown below.
@@ -18,8 +18,8 @@ inside my house. This cuts out when the voltage on the battery drops to a
 low level.
 
 The controller is a Raspberry Pi with a PCB (detailed bellow) connected 
-that provides the ability to control power and measure voltage, current 
-and temperatures and also extends the WiFi network into the (metal) shed.
+that provides the ability to control power, measure voltage, current 
+and temperatures and also extends a WiFi network into the (metal) shed.
 
 ## Controller Hardware Design.
 
@@ -56,13 +56,23 @@ performance issues due to the nature of distributed system responsibilities.
 
 ![Overview](images/sw_arch.png "Diagram of the software architecture.")
 
-The above architecture uses a Tornado web server. This presents a local web interface (shown below). The web interface uses bootstrap to allow the layout to resize itself this is now the norm for web interfaces even on smaller web servers. I used [bootstrap studio](https://bootstrapstudio.io/) to design the web interface as this reduced the effort required to design a maintain a web interface. The ogsolar/www contains a bootstrap studio project file for the design.
+The above architecture uses a Tornado web server. This presents a local web interface (shown below). 
+The web interface uses bootstrap to allow the layout to resize itself. 
+I used [bootstrap studio](https://bootstrapstudio.io/) to design the web interface as this 
+reduced the effort required to design a maintain a web interface. 
+The ogsolar/www folder contains a bootstrap studio project file for the design.
 
 ![Overview](images/web1.png "Page 1 Web Interface")
 
 ![Overview](images/web2.png "Page 2 Web Interface")
 
-The software running on the Raspberry Pi also connects to the [Yview Framework](https://github.com/pjaos/yview) and which allows integration with servers running database systems and webservers. The OGSolar device works without connecting to the YView network but the YView network provides access to a wider network of devices using technologies such as MQTT servers. An example of the OGsolar unit providing data to such a system can be found [here](https://projects.pausten.me.uk/ogsolar_history.html). This shows live data from a running OGSolar unit.
+The software running on the Raspberry Pi also connects to the [Yview Framework](https://github.com/pjaos/yview)
+which allows integration with servers running database systems and webservers. 
+The OGSolar device works without connecting to the YView network but the YView
+network provides access to a wider network of devices using technologies such 
+as MQTT servers. An example of the OGsolar unit providing data to such a
+system can be found [here](https://projects.pausten.me.uk/ogsolar_history.html).
+This shows live data from a running OGSolar unit.
 
 
 ### Embedded Device Software
