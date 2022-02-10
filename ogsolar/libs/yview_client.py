@@ -12,8 +12,23 @@ class AYTListener(object):
     AYT_POLL_SECONDS         = 5
     UDP_DEV_DISCOVERY_PORT   = 2934
     UDP_RX_BUFFER_SIZE       = 2048
-    AreYouThereMessage       = "{\"AYT\": \"-!#8[dkG^v's!dRznE}6}8sP9}QoIR#?O&pg)Qra\"}"
+    ARE_YOU_THERE_STRING     = "-!#8[dkG^v's!dRznE}6}8sP9}QoIR#?O&pg)Qra"
     WEB_SERVER_PORT          = 8080
+    
+    @staticmethod
+    def IsAYTMsg(msg, exepectedAYTString):
+        """@brief Check if the AYT message contains the string.
+           @return True if the message matches the AYT string."""
+        aytMsg = False
+        try:
+            aDict = json.loads(msg)
+            if "AYT" in aDict:
+                aytString = aDict["AYT"]
+                if aytString == exepectedAYTString:
+                    aytMsg = True
+        except:
+            pass
+        return aytMsg
     
     def __init__(self, uo, options, idDict):
         """@Constructor
@@ -55,7 +70,7 @@ class AYTListener(object):
                 self._ipAddress = self._netIF.getIFIPAddress(ifName)
 
                 # If this was an AYT message
-                if rxData == AYTListener.AreYouThereMessage:
+                if AYTListener.IsAYTMsg(rxData, AYTListener.ARE_YOU_THERE_STRING):
                     self._lastAYTMsgTime = time()
                     try:
                         self._yviewClientLock.acquire()

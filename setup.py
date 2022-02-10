@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="ogsolar",                                  # The python module name.
-    version="4.5",                                   # The version of the module.
+    version="4.6",                                   # The version of the module.
     author="Paul Austen",                            # The name of the module author.
     author_email="pausten.os@gmail.com",             # The email address of the author.
     description="A Raspberry PI application for controlling EPEver Tracer off grid solar installations.", # A short description of the module.
