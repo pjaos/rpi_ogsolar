@@ -103,25 +103,34 @@ def setSpareRelay(uio, options):
        @param options argparse options instance."""
     gpioControl = GPIOControl(uio, options)   
     try:
-        if options.sparer in [0,1]:
-            gpioControl.selectACMains(not options.sparer)
-            if options.sparer:
+        if options.spare in [0,1]:
+            gpioControl.spare(options.spare)
+            if options.spare:
                 uio.info("Set spare relay ON")
             else:
                 uio.info("Set spare relay OFF")
             stop()
         else:
-            raise Exception("--sparer must be followed by 0 or 1.")
+            raise Exception("--spare must be followed by 0 or 1.")
     finally:
         gpioControl.close()
     return
 
-def enableAutoStart(user):
+def enableAutoStart(options):
     """@brief Enable this program to auto start when the computer on which it is installed starts.
        @param user The username which which you wish to execute on autostart."""
     bootManager = BootManager()
-    if user:           
-        bootManager.add(user=user, enableSyslog=True)
+        
+    if options.user:
+        
+        arsString = ""
+        if options.debug:
+            arsString = "{} --debug".format(arsString)
+                
+        if len(options.yview_ba) > 0:
+            arsString = "{} --yview_ba {}".format(arsString, options.yview_ba)
+        
+        bootManager.add(user=options.user, argString=arsString, enableSyslog=True)
     else:
         raise Exception("--user not set.")
 
@@ -144,7 +153,7 @@ def main():
     uio = UIO()
 
     opts=OptionParser(usage='An application to control an off grid solar installation. Specifically for use with an EPSolar Tracer MPPT controller connected to a battery (Lithium or Lead Acid). An inverter can be used to power devices when sufficient charge is available on the battery.')
-    opts.add_option("--config",             help="Set the configuration parameters.", action="store_true", default=False)
+    opts.add_option("-c", "--config",       help="Set the configuration parameters.", action="store_true", default=False)
     opts.add_option("--cal",                help="Calibrate the voltage and current measurements.", action="store_true", default=False)
     opts.add_option("--quiet",              help="Do not display messages on stdout.", action="store_true", default=False)
     opts.add_option("--inv_on",             help="On startup set the inverter on and select the inverter output. By default the inverter is off and mains AC is selected.", action="store_true", default=False)
@@ -160,6 +169,7 @@ def main():
     opts.add_option("--user",               help="The user name when the --enable_auto_start argument is used (default={})".format(getuser()), default=getuser())
     opts.add_option("--disable_auto_start", help="Disable auto starting when this computer starts.", action="store_true", default=False)
     opts.add_option("--check_auto_start",   help="Check the status of an auto started ogsolar instance.", action="store_true", default=False)
+    opts.add_option("--yview_ba",           help="The bind address for the yview client. The default is unset to bind to all interfaces. If set the broadcast IP should be set (E.G 192.168.0.255).", default="")
     
     #The following are debugging options used to test that the hardware was working when the HW was built.
     opts.add_option("--dv",                 help="Debug the voltage reading. Read and display the voltage every second.", action="store_true", default=False)
@@ -171,7 +181,7 @@ def main():
     opts.add_option("--l1",                 help="Set load 1 on/off (1/0) for debugging purposes. This output should be connected to the inverter.", type=int, default=-1)
     opts.add_option("--l2",                 help="Set load 2 on/off (1/0) for debugging purposes.", type=int, default=-1)
     opts.add_option("--invr",               help="Set the inverter relay output on/off (1/0) for debugging purposes.", type=int, default=-1)
-    opts.add_option("--sparer",             help="Set the spare relay output on/off (1/0) for debugging purposes.", type=int, default=-1)
+    opts.add_option("--spare",             help="Set the spare relay output on/off (1/0) for debugging purposes.", type=int, default=-1)
 
     try:
         (options, args) = opts.parse_args()
@@ -234,7 +244,7 @@ def main():
             setInverterRelay(uio, options)
             return
         
-        if options.sparer != -1:
+        if options.spare != -1:
             setSpareRelay(uio, options)
             return
         
@@ -249,7 +259,7 @@ def main():
             appConfig.configure()
 
         elif options.enable_auto_start:
-            enableAutoStart(options.user)
+            enableAutoStart(options)
 
         elif options.disable_auto_start:
             disableAutoStart()
