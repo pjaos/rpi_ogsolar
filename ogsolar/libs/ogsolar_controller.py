@@ -305,12 +305,17 @@ class OGSolarController(object):
         #Update here so that the user can change config on the fly while ogsolar is running
         forceChargeBatteryVoltageLowLimit = self._appConfig.getAttr(AppConfig.FORCE_CHARGE_VOLTAGE)
         batVolts = sysStatusDict[EPSolarTracerInterface.BAT_VOLTS]
+        # Get the battery temperature
+        batTemp = sysStatusDict[EPSolarTracerInterface.BATTERY_TEMPERATURE]
         
         # If the battery voltage has dropped to far we force a charge from the AC mains.
         if self._stopChargeTime is None and batVolts < forceChargeBatteryVoltageLowLimit:
-            self._gpioControl.spare(True)
-            self._stopChargeTime = time()+OGSolarController.FORCE_CHARGE_SECONDS
-            self._uio.warn("Started charging battery from mains AC as it dropped to {:.1f} volts (Limit is {:.1f} volts).".format(batVolts, forceChargeBatteryVoltageLowLimit))
+            if batTemp < EPSolarTracerInterface.MIN_BATTERY_CHARGE_TEMP:
+                self._uio.warn("Unable to charge battery as the battery temperature is < {} °C".format(batTemp))
+            else:                
+                self._gpioControl.spare(True)
+                self._stopChargeTime = time()+OGSolarController.FORCE_CHARGE_SECONDS
+                self._uio.warn("Started charging battery from mains AC as it dropped to {:.1f} volts (Limit is {:.1f} volts).".format(batVolts, forceChargeBatteryVoltageLowLimit))
             
         if self._stopChargeTime is not None and\
            self._stopChargeTime < time():
