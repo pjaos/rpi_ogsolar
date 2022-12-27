@@ -22,6 +22,7 @@ class OGSolarController(object):
     MAX_CPU_TEMP_C                      = 60
     RPI_HEATSINK_TEMPERATURE            = "RPi CONTROLLER HEATSINK °C"
     RPI_CPU_TEMPERATURE                 = "RPi CONTROLLER CPU °C"
+    FORCE_CHARGE_SECONDS                = 3600*5 # default 5 hour force charge.
 
     @staticmethod
     def GetMemUsage():
@@ -44,6 +45,7 @@ class OGSolarController(object):
         self._allowBatteryLoadOn    = True
         self._running               = False
         self._stopped               = False
+        self._stopChargeTime        = None
                 
         self._gpioControl = GPIOControl(self._uio, self._options)    
         self._adcInterface = ADCInterface(self._uio, self._options)
@@ -108,6 +110,7 @@ class OGSolarController(object):
         self._running = True
         self._stopped = False
         self._mpptReadErrorCount = 0
+        self._stopChargeTime = None
         try:
             while self._running:            
 
@@ -160,6 +163,7 @@ class OGSolarController(object):
                 self._showMemUsage(5)
 
                 self.updateLoadState(sysStatusDict)
+                self.updateForceChargeState(sysStatusDict)
         
                 self._showMemUsage(6)
         
@@ -295,6 +299,26 @@ class OGSolarController(object):
             self._uio.error('Unable to read battery volts and charge state.')
             self._uio.error('Turned load 1 and load 2 off.')
                             
+    def updateForceChargeState(self, sysStatusDict):
+        """@brief Update the force charge state.
+           @param sysStatusDict The dict of values obtained from the MPPT controller."""
+        #Update here so that the user can change config on the fly while ogsolar is running
+        forceChargeBatteryVoltageLowLimit = self._appConfig.getAttr(AppConfig.FORCE_CHARGE_VOLTAGE)
+        batVolts = sysStatusDict[EPSolarTracerInterface.BAT_VOLTS]
+        
+        # If the battery voltage has dropped to far we force a charge from the AC mains.
+        if self._stopChargeTime is None and batVolts < forceChargeBatteryVoltageLowLimit:
+            self._gpioControl.spare(True)
+            self._stopChargeTime = time()+OGSolarController.FORCE_CHARGE_SECONDS
+            self._uio.warn("Started charging battery from mains AC as it dropped to {:.1f} volts (Limit is {:.1f} volts).".format(batVolts, forceChargeBatteryVoltageLowLimit))
+            
+        if self._stopChargeTime is not None and\
+           self._stopChargeTime < time():
+            self._gpioControl.spare(False)
+            self._uio.warn("Stopped charging the battery from the mains after {} seconds.".format(OGSolarController.FORCE_CHARGE_SECONDS))
+            self._stopChargeTime = None
+            
+                
     def _setLoadsOff(self):
         """@brief Turn off both load ports. Select AC mains and turn off spare relay."""
         self._setLoad1(False)

@@ -10,6 +10,7 @@ class AppConfig(object):
     LOAD1_OFF_VOLTAGE                   = "LOAD1_CUTOFF_VOLTAGE"        # The battery voltage at which load 1 will be turned off 
     LOAD2_ON_VOLTAGE                    = "LOAD2_ON_VOLTAGE"            # The battery voltage at which load 2 will be turned on
     LOAD2_OFF_VOLTAGE                   = "LOAD2_CUTOFF_VOLTAGE"        # The battery voltage at which load 2 will be turned off 
+    FORCE_CHARGE_VOLTAGE                = "FORCE_CHARGE_VOLTAGE"        # The battery voltage to reach before a the battery is charged from the mains AC 
     SYSLOG_SERVER                       = "SYSLOG_SERVER"
     TRACER_MPPT_SERIAL_PORT             = "TRACER_MPPT_SERIAL_PORT"
     TRACER_MPPT_POLL_SECONDS            = "TRACER_MPPT_POLL_SECONDS"
@@ -26,6 +27,7 @@ class AppConfig(object):
         LOAD1_OFF_VOLTAGE:          14.8,
         LOAD2_ON_VOLTAGE:           15.95,        
         LOAD2_OFF_VOLTAGE:          14.4,
+        FORCE_CHARGE_VOLTAGE:       14.3,
         DELAY_BEFORE_ERROR_REBOOT:  120,
         SYSLOG_SERVER:              "",
         TRACER_MPPT_SERIAL_PORT:    DEFAULT_TRACER_MPPT_SERIAL_PORT,
@@ -81,6 +83,10 @@ class AppConfig(object):
                 self._configManager.inputFloat(AppConfig.LOAD2_ON_VOLTAGE,  "Enter battery voltage at which load 2 will turn on." , minValue=12.0, maxValue=16.8)
                 if self._voltageLimitsOK(AppConfig.LOAD2_ON_VOLTAGE, AppConfig.LOAD2_OFF_VOLTAGE):
                     break
+
+        if key == AppConfig.FORCE_CHARGE_VOLTAGE:
+            self._uio.info("This is useful in winter when solar cannot keep the battery charged.")
+            self._configManager.inputFloat(AppConfig.FORCE_CHARGE_VOLTAGE,  "Enter battery voltage at which the battery is charged from mains AC." , minValue=12.0, maxValue=16.8)
 
         if key == AppConfig.LOAD2_ON_VOLTAGE:
             self._configManager.inputDecInt(AppConfig.LOAD2_ON_VOLTAGE,  "Enter battery voltage at which load 2 will turn on." , minValue=12.0, maxValue=16.8)
