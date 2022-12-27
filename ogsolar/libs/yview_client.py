@@ -47,7 +47,7 @@ class AYTListener(object):
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
         self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-        self._sock.bind(('', AYTListener.UDP_DEV_DISCOVERY_PORT))
+        self._sock.bind((self._options.yview_ba, AYTListener.UDP_DEV_DISCOVERY_PORT))
         
         self.initAYTTime()
 
